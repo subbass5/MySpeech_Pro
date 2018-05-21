@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeRefreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+
+    android:gravity="center"
+    android:background="#636363"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="150dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_header_category"
+            android:textSize="40sp"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_lbl_header" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_playsound"
+        android:text="@string/btn_Sound"
+        android:backgroundTint="#2e2e2e"
+        android:textColor="#f7cd83"
+        android:textSize="30sp"
+        android:layout_marginTop="80dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp" />
+    <Button
+        android:id="@+id/btn_playch"
+        android:text="@string/btn_play"
+        android:backgroundTint="#2e2e2e"
+        android:textColor="#f7cd83"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp" />
+
+
+</LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

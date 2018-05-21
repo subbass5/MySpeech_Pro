@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MySpeech</string>
+    <string name="HeaderLogin">เข้าสู่ระบบ</string>
+    <string name="hintUsername">ชื่อ</string>
+    <string name="hintPassword">รหัสผ่าน</string>
+    <string name="btnLogin">เข้าสู่ระบบ</string>
+    <string name="tv_register">สร้างบัญชีผู้ใช้</string>
+    <string name="speech_not_supported">Sorry! Your device doesn \t support speech input</string>
+    <string name="speech_prompt">พูดเพื่อสั่งงาน</string>
+    <string name="chkRemember">จำฉันไว้</string>
+    <string name="progressLoading">Loading...</string>
+    <string name="tv_lbl_register">สมัครสมาชิก</string>
+    <string name="btnRegister">สมัครสมาชิก</string>
+    <string name="btnReset">ล้างข้อมูล</string>
+    <string name="tv_row_manin">หมวดหมู่</string>
+    <string name="btnSound">ฟังเสียง</string>
+    <string name="btnDo">ทำแบบทดสอบ</string>
+    <string name="logout">คุณต้องการออกจากระบบหรือไม่ ?</string>
+    <string name="submit">ตกลง</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="tv_lbl_header">Category</string>
+    <string name="btn_Sound">ฟังเสียง</string>
+    <string name="btn_play">ทำแบบทดสอบ</string>
+    <string name="btn_send_question">ถัดไป</string>
+</resources>

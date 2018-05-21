@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginBottom="10dp"
+    android:background="#daf5c1f7"
+    android:layout_height="80dp">
+    <LinearLayout
+        android:gravity="center"
+        android:background="#daf9d1fa"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tv_categories"
+            android:text="@string/tv_row_manin"
+            android:textSize="24sp"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <!--<LinearLayout-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
+
+            <!--<Button-->
+                <!--android:id="@+id/btnSound"-->
+                <!--android:text="@string/btnSound"-->
+                <!--android:layout_marginLeft="30dp"-->
+                <!--android:textColor="#FFF"-->
+                <!--android:backgroundTint="#494949"-->
+                <!--android:layout_marginRight="30dp"-->
+                <!--android:layout_width="140dp"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<Button-->
+                <!--android:id="@+id/btnAns"-->
+                <!--android:text="@string/btnDo"-->
+                <!--android:textColor="#FFF"-->
+                <!--android:backgroundTint="#494949"-->
+                <!--android:layout_marginLeft="30dp"-->
+                <!--android:layout_marginRight="30dp"-->
+                <!--android:layout_width="140dp"-->
+                <!--android:layout_height="wrap_content" />-->
+
+        <!--</LinearLayout>-->
+    </LinearLayout>
+
+
+
+
+</android.support.v7.widget.CardView>
