@@ -70,6 +70,8 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
     public static final String JSON_ANS2 = "ans2";
     public static final String JSON_ANS3 = "ans3";
     public static final String JSON_URL = "url_sund";
+    public static final String JSON_SCORE = "score";
+
 
 
     MediaPlayer mPlayer;
@@ -299,6 +301,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
                     jsonObject.put(JSON_ANS2,""+questionRes.get(i).getAnswer2());
                     jsonObject.put(JSON_ANS3,""+questionRes.get(i).getAnswer3());
                     jsonObject.put(JSON_URL,""+questionRes.get(i).getAnswer4());
+                    jsonObject.put(JSON_SCORE,""+questionRes.get(i).getAnswer());
                     jsonArray.put(jsonObject);
 
 

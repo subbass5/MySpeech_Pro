@@ -28,10 +28,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import recognitioncom.speech.myspeech.R;
+import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 
 import static android.app.Activity.RESULT_OK;
 
 public class FragmentQuestion extends Fragment implements View.OnClickListener{
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Context context;
@@ -40,9 +42,11 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     SwipeRefreshLayout swipeRefreshLayout;
     private final int REQ_CODE_SPEECH_INPUT = 1001;
     FragmentManager fragmentManager;
-    String dataAll,dataChoice;
+    String dataAll,url;
     int choice = 0;
     MediaPlayer mPlayer;
+
+    public static final String KEY_SCORE_TMP = "score_tmp";
 
     @Nullable
     @Override
@@ -74,16 +78,24 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         choice = sharedPreferences.getInt(FragmentLogin.KEY_CHOICE_NUM,0);
         context = getContext();
         v.findViewById(R.id.btn_send_question).setOnClickListener(this);
+        v.findViewById(R.id.btn_play).setOnClickListener(this);
         tv_question = v.findViewById(R.id.tv_question);
         ans1 = v.findViewById(R.id.radioAns1);
         ans2 = v.findViewById(R.id.radioAns2);
         ans3 = v.findViewById(R.id.radioAns3);
 
+        set_choice(choice);
+
+    }
+
+    private void set_choice(int category_id){
+
         try {
 
-            JSONObject jsonObject = new JSONObject(getQuestion(choice));
+            JSONObject jsonObject = new JSONObject(getQuestion(category_id));
             playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
-            tv_question.setText(jsonObject.getString(FragmentMainCategory.JSON_NAMES));
+            url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
+            tv_question.setText(url);
             ans1.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS1));
             ans2.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS2));
             ans3.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS3));
@@ -94,12 +106,8 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
 
     }
 
-    private void send_question(String category_id){
-
-
-    }
-
     private void promptSpeechInput() {
+
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "th-TH");
@@ -141,6 +149,19 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         }
     }
 
+    private int getIndexData(){
+        try {
+            JSONArray jsonArray = new JSONArray(dataAll);
+
+            return jsonArray.length();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+    }
+
     private String  getQuestion(int index){
         String tmpStr = "";
 
@@ -156,6 +177,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     }
 
     private void sendQuestion(String id,String choice){
+//        new NetworkConnectionManager().callQuestion();
 
     }
 
@@ -203,6 +225,13 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         switch (v.getId()){
             case R.id.btn_send_question:
 
+                if(choice < getIndexData()){
+                    set_choice(choice+=1);
+                }
+
+                break;
+            case R.id.btn_play:
+                playSoundQuestion(url);
                 break;
         }
     }
