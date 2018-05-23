@@ -72,7 +72,7 @@ public class MyTTS extends UtteranceProgressListener implements TextToSpeech.OnI
         }
 
 
-        tts.setSpeechRate(0.6f);
+        tts.setSpeechRate(0.1f);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "");

@@ -71,6 +71,8 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
     public static final String JSON_ANS3 = "ans3";
     public static final String JSON_URL = "url_sund";
     public static final String JSON_SCORE = "score";
+    public static final String JSON_ANS = "ans";
+
 
 
 
@@ -96,7 +98,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
         Category = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY,"");
         UrlCategory = sharedPreferences.getString(FragmentLogin.KEY_URL_MAIN_CATEGORY,"");
         id_ = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
-        MyTTS.getInstance(context).speak("id  = "+ id_);
+
 
         try {
 //            Log.e(TAG,UrlCategory);
@@ -243,7 +245,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
         // set choice  0
         editor.putInt(FragmentLogin.KEY_CHOICE_NUM,0);
         editor.commit();
-        Toast.makeText(context, ""+id_, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, ""+id_, Toast.LENGTH_SHORT).show();
 
         new NetworkConnectionManager().callQuestion(listenner,id_);
 
@@ -268,7 +270,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
                     if (result.get(0).equals("1") || result.get(0).equals("ฟังเสียง"))
                         btnPlaySound();
                     if (result.get(0).equals("2") || result.get(0).equals("ทำแบบทดสอบ"))
-                        btnPlaySound();
+                        btnPlayChoice();
 
                     if(result.get(0).equals("กลับสู่หน้าหลัก")){
                         fragmentManager.popBackStack();
@@ -289,31 +291,35 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
             if(progressDialog.isShowing()){
                 progressDialog.dismiss();
             }
-            JSONObject jsonObject = new JSONObject();
+            try {
+
             JSONArray jsonArray = new JSONArray();
 
             for(int i = 0 ;i< questionRes.size();i++){
                 Log.e(TAG,"index "+i+"= "+questionRes.get(i).getId());
-                try {
-                    jsonObject.put(JSON_ID,""+questionRes.get(i).getId());
-                    jsonObject.put(JSON_NAMES,""+questionRes.get(i).getQuestionName());
-                    jsonObject.put(JSON_ANS1,""+questionRes.get(i).getAnswer1());
-                    jsonObject.put(JSON_ANS2,""+questionRes.get(i).getAnswer2());
-                    jsonObject.put(JSON_ANS3,""+questionRes.get(i).getAnswer3());
-                    jsonObject.put(JSON_URL,""+questionRes.get(i).getAnswer4());
-                    jsonObject.put(JSON_SCORE,""+questionRes.get(i).getAnswer());
+                   JSONObject jsonObject = new JSONObject();
+
+                    jsonObject.put(JSON_ID,questionRes.get(i).getId());
+                    jsonObject.put(JSON_NAMES,questionRes.get(i).getQuestionName());
+                    jsonObject.put(JSON_ANS1,questionRes.get(i).getAnswer1());
+                    jsonObject.put(JSON_ANS2,questionRes.get(i).getAnswer2());
+                    jsonObject.put(JSON_ANS3,questionRes.get(i).getAnswer3());
+                    jsonObject.put(JSON_URL,questionRes.get(i).getAnswer4());
+                    jsonObject.put(JSON_SCORE,questionRes.get(i).getAnswer());
                     jsonArray.put(jsonObject);
 
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                Log.e(TAG,""+jsonArray);
+                editor.putInt(FragmentLogin.KEY_SIZE,questionRes.size());
+                editor.putString(FragmentLogin.KEY_DATA,jsonArray.toString());
+                editor.commit();
 
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            editor.putInt(FragmentLogin.KEY_SIZE,questionRes.size());
-            editor.putString(FragmentLogin.KEY_DATA,jsonArray.toString());
-            editor.commit();
+
 
             //go to frg question
             FragmentQuestion fragmentQuestion = new FragmentQuestion();

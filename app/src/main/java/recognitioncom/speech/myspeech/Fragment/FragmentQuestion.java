@@ -6,13 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +23,20 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.gson.JsonObject;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
+import recognitioncom.speech.myspeech.TTS.MyTTS;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,6 +53,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     String dataAll,url;
     int choice = 0;
     MediaPlayer mPlayer;
+    int ansTrue ;
 
     public static final String KEY_SCORE_TMP = "score_tmp";
 
@@ -88,23 +97,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
 
     }
 
-    private void set_choice(int category_id){
 
-        try {
-
-            JSONObject jsonObject = new JSONObject(getQuestion(category_id));
-            playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
-            url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
-            tv_question.setText(url);
-            ans1.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS1));
-            ans2.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS2));
-            ans3.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS3));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void promptSpeechInput() {
 
@@ -135,7 +128,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-
+                    chkAns(result.get(0),choice);
 
                     if(result.get(0).equals("กลับสู่หน้าหลัก")){
 
@@ -149,6 +142,47 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         }
     }
 
+    private void set_choice(int category_id){
+//        Toast.makeText(context, "Set choice= "+category_id, Toast.LENGTH_SHORT).show();
+        try {
+
+            JSONObject jsonObject = new JSONObject(getQuestion(category_id));
+            Log.e("DATA question ",""+jsonObject);
+            playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
+            url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
+            tv_question.setText(url);
+
+            ans1.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS1));
+            ans2.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS2));
+            ans3.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS3));
+            ansTrue = Integer.parseInt(jsonObject.getString(FragmentMainCategory.JSON_SCORE));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void Speak_for_simple(int category_id){
+//        Toast.makeText(context, "Set choice= "+category_id, Toast.LENGTH_SHORT).show();
+        try {
+
+            JSONObject jsonObject = new JSONObject(getQuestion(category_id));
+            playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
+            url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
+
+            MyTTS.getInstance(context).setLocale(new Locale("th"))
+                    .speak(jsonObject.getString(FragmentMainCategory.JSON_NAMES)+"ตอบ  1"
+                            +jsonObject.getString(FragmentMainCategory.JSON_ANS1)
+                            +"ตอบ  2 "+jsonObject.getString(FragmentMainCategory.JSON_ANS2)
+                            +"ตอบ  3 "+jsonObject.getString(FragmentMainCategory.JSON_ANS3)
+                    );
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private int getIndexData(){
         try {
             JSONArray jsonArray = new JSONArray(dataAll);
@@ -159,7 +193,23 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
             e.printStackTrace();
             return -1;
         }
+    }
 
+    private Boolean chkAns(String result,int Choice){
+        String tmpStr="";
+        try {
+            JSONArray jsonArray = new JSONArray(dataAll);
+            JSONObject jsonObject = new JSONObject(jsonArray.get(Choice).toString());
+           if(result.equals(jsonObject.getString(FragmentMainCategory.JSON_ANS)))
+              return true;
+           else
+               return false;
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private String  getQuestion(int index){
@@ -168,18 +218,16 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         try {
             JSONArray jsonArray = new JSONArray(dataAll);
             tmpStr = ""+jsonArray.get(index);
-
+            Log.e("getQuestion "+index,tmpStr);
+            Log.e("getQuestion2 "+index,dataAll+" data arr = "+jsonArray.length());
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("getQuestion "+index,e.getMessage());
         }
         return tmpStr;
     }
 
-    private void sendQuestion(String id,String choice){
-//        new NetworkConnectionManager().callQuestion();
 
-    }
 
     private void playSoundQuestion(String url){
 
@@ -197,7 +245,9 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
                 public void onCompletion(MediaPlayer mediaPlayer) {
 //                Toast.makeText(context,"End",Toast.LENGTH_SHORT).show();
                     try {
+                        Speak_for_simple(choice);
                         promptSpeechInput();
+
                     }catch (Exception e){
 
                     }
@@ -212,6 +262,13 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
 
     }
 
+    public void fragmentTran(Fragment fragment,Bundle bundle){
+
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction frgTran = fragmentManager.beginTransaction();
+        frgTran.replace(R.id.contentApp, fragment).addToBackStack(null).commit();
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -224,9 +281,38 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_send_question:
-
+                int AnswerNow = 0;
+//                Toast.makeText(context, ""+getIndexData(), Toast.LENGTH_SHORT).show();
+                mPlayer.stop();
                 if(choice < getIndexData()){
-                    set_choice(choice+=1);
+                    if(ans1.isChecked()){
+                       AnswerNow = 1;
+                        choice +=1;
+                        set_choice(choice);
+                    }else if(ans2.isChecked()){
+                        AnswerNow = 2;
+                        choice +=1;
+                        set_choice(choice);
+                    }else if (ans3.isChecked()){
+                        AnswerNow = 3;
+                        choice +=1;
+                        set_choice(choice);
+                    }else {
+                        Toast.makeText(context, "กรุณาเลือกข้อสอบก่อนส่ง", Toast.LENGTH_SHORT).show();
+
+                    }
+                    if(ansTrue == AnswerNow){
+                        Toast.makeText(context, "ถูกต้องงง"+ansTrue +"   now "+ AnswerNow, Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(context, "ผิดดดดด "+ansTrue +"   now "+ AnswerNow, Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }else {
+                    Toast.makeText(context, "ทำแบบทดสอบเสร็จสิ้น !", Toast.LENGTH_SHORT).show();
+                    FragmentShowScore showScore = new FragmentShowScore();
+                    fragmentTran(showScore,null);
+
                 }
 
                 break;
