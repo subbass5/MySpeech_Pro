@@ -51,10 +51,11 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     private final int REQ_CODE_SPEECH_INPUT = 1001;
     FragmentManager fragmentManager;
     String dataAll,url;
+    int ansTrue ,scoreTmp;
     int choice = 0;
     MediaPlayer mPlayer;
-    int ansTrue ;
 
+    public static final String KEY_SCORE = "score";
     public static final String KEY_SCORE_TMP = "score_tmp";
 
     @Nullable
@@ -74,7 +75,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                mPlayer.stop();
                 swipeRefreshLayout.setRefreshing(false);
                 promptSpeechInput();
 
@@ -84,7 +85,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         sharedPreferences = getActivity().getSharedPreferences(FragmentLogin.MYFER, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         dataAll = sharedPreferences.getString(FragmentLogin.KEY_DATA,"");
-        choice = sharedPreferences.getInt(FragmentLogin.KEY_CHOICE_NUM,0);
+        choice = 0;
         context = getContext();
         v.findViewById(R.id.btn_send_question).setOnClickListener(this);
         v.findViewById(R.id.btn_play).setOnClickListener(this);
@@ -128,7 +129,19 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    chkAns(result.get(0),choice);
+                    if(result.get(0).equals("1") || result.get(0).equals(ans1.getText().toString())){
+
+                        ans1.setChecked(true);
+
+                    }else if(result.get(0).equals("2") || result.get(0).equals(ans2.getText().toString())){
+
+                        ans2.setChecked(true);
+
+                    }else if(result.get(0).equals("3") || result.get(0).equals(ans3.getText().toString())){
+                        ans3.setChecked(true);
+                    }
+
+                    onClickNext();
 
                     if(result.get(0).equals("กลับสู่หน้าหลัก")){
 
@@ -147,7 +160,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         try {
 
             JSONObject jsonObject = new JSONObject(getQuestion(category_id));
-            Log.e("DATA question ",""+jsonObject);
+
             playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
             url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
             tv_question.setText(url);
@@ -276,44 +289,52 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         mPlayer.stop();
     }
 
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_send_question:
-                int AnswerNow = 0;
+    private void onClickNext(){
+        int AnswerNow = 0;
 //                Toast.makeText(context, ""+getIndexData(), Toast.LENGTH_SHORT).show();
-                mPlayer.stop();
-                if(choice < getIndexData()){
-                    if(ans1.isChecked()){
-                       AnswerNow = 1;
-                        choice +=1;
-                        set_choice(choice);
-                    }else if(ans2.isChecked()){
-                        AnswerNow = 2;
-                        choice +=1;
-                        set_choice(choice);
-                    }else if (ans3.isChecked()){
-                        AnswerNow = 3;
-                        choice +=1;
-                        set_choice(choice);
-                    }else {
-                        Toast.makeText(context, "กรุณาเลือกข้อสอบก่อนส่ง", Toast.LENGTH_SHORT).show();
+        mPlayer.stop();
+        if(choice < getIndexData()){
+            if(ans1.isChecked()){
+                AnswerNow = 1;
+                choice +=1;
 
-                    }
-                    if(ansTrue == AnswerNow){
-                        Toast.makeText(context, "ถูกต้องงง"+ansTrue +"   now "+ AnswerNow, Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(context, "ผิดดดดด "+ansTrue +"   now "+ AnswerNow, Toast.LENGTH_SHORT).show();
+            }else if(ans2.isChecked()){
+                AnswerNow = 2;
+                choice +=1;
 
-                    }
+            }else if (ans3.isChecked()){
+                AnswerNow = 3;
+                choice +=1;
 
-                }else {
-                    Toast.makeText(context, "ทำแบบทดสอบเสร็จสิ้น !", Toast.LENGTH_SHORT).show();
+
+            }else {
+                Toast.makeText(context, "กรุณาเลือกข้อสอบก่อนส่ง", Toast.LENGTH_SHORT).show();
+
+            }
+            if(ansTrue == AnswerNow) {
+                scoreTmp += 1;
+                editor.putInt(KEY_SCORE, scoreTmp);
+                editor.commit();
+            }
+
+            set_choice(choice);
+
+        }else {
                     FragmentShowScore showScore = new FragmentShowScore();
                     fragmentTran(showScore,null);
 
-                }
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+
+            case R.id.btn_send_question:
+
+                onClickNext();
 
                 break;
             case R.id.btn_play:
