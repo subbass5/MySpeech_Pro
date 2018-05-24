@@ -22,4 +22,5 @@
     <string name="btn_Sound">ฟังเสียง</string>
     <string name="btn_play">ทำแบบทดสอบ</string>
     <string name="btn_send_question">ถัดไป</string>
+    <string name="tv_header_score">ผลคะแนนที่ทำได้</string>
 </resources>
