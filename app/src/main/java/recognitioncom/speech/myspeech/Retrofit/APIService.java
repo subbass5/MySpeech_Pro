@@ -6,6 +6,7 @@ import recognitioncom.speech.myspeech.Pojo.CategoriesRes;
 import recognitioncom.speech.myspeech.Pojo.LoginRes;
 import recognitioncom.speech.myspeech.Pojo.QuestionRes;
 import recognitioncom.speech.myspeech.Pojo.RegisterRes;
+import recognitioncom.speech.myspeech.Pojo.SendScore;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -41,6 +42,10 @@ public interface APIService {
     @FormUrlEncoded
     @POST("api/api-list-questions.php")
     Call<List<QuestionRes>> justPlay(@Field("category_id") String cId);
+
+    @FormUrlEncoded
+    @POST("api/api-save-score.php")
+    Call<SendScore> sendScore(@Field("user") String username, @Field("score") String score, @Field("category_id") String cId);
 
 
 }

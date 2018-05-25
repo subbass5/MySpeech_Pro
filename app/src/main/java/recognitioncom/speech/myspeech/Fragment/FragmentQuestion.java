@@ -34,7 +34,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import okhttp3.ResponseBody;
+import recognitioncom.speech.myspeech.Pojo.SendScore;
 import recognitioncom.speech.myspeech.R;
+import recognitioncom.speech.myspeech.Retrofit.CallbackSendScore;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.TTS.MyTTS;
 
@@ -320,11 +323,50 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
             set_choice(choice);
 
         }else {
-                    FragmentShowScore showScore = new FragmentShowScore();
-                    fragmentTran(showScore,null);
+            String name = sharedPreferences.getString(FragmentLogin.KEY_NAME,"");
+            String category_id = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
+            String ScoreTmp = ""+scoreTmp;
+            Log.e("Befor save","name = "+name+" score = "+ScoreTmp+" Category = "+category_id);
+            new NetworkConnectionManager().sendScore(sendScore,name,ScoreTmp,category_id);
+
 
         }
     }
+
+
+    CallbackSendScore sendScore = new CallbackSendScore() {
+        @Override
+        public void onResponse(SendScore sendScore) {
+
+//            Toast.makeText(context, ""+sendScore.getState(), Toast.LENGTH_SHORT).show();
+
+            if(sendScore.getState().equals("success")){
+
+                FragmentShowScore showScore = new FragmentShowScore();
+                fragmentTran(showScore,null);
+
+            }else {
+                fragmentManager.popBackStack();
+            }
+
+
+        }
+
+        @Override
+        public void onBodyError(ResponseBody responseBodyError) {
+
+        }
+
+        @Override
+        public void onBodyErrorIsNull() {
+
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+
+        }
+    };
 
 
     @Override

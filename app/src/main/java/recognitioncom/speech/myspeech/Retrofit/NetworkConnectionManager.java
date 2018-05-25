@@ -13,6 +13,7 @@ import recognitioncom.speech.myspeech.Pojo.CategoriesRes;
 import recognitioncom.speech.myspeech.Pojo.LoginRes;
 import recognitioncom.speech.myspeech.Pojo.QuestionRes;
 import recognitioncom.speech.myspeech.Pojo.RegisterRes;
+import recognitioncom.speech.myspeech.Pojo.SendScore;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -242,6 +243,66 @@ public class NetworkConnectionManager {
 
             @Override
             public void onFailure(Call<List<QuestionRes>> call, Throwable t) {
+
+                listener.onFailure(t);
+
+            }
+
+
+        });
+
+
+
+    }
+
+    public void sendScore(final CallbackSendScore listener,String username,String score,String category_id){
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        APIService git = retrofit.create(APIService.class);
+        Call call = git.sendScore(username,score,category_id);
+
+
+        call.enqueue(new Callback<SendScore>() {
+
+
+            @Override
+            public void onResponse(Call<SendScore> call, Response<SendScore> response) {
+
+                try {
+
+                    SendScore categoriesRes =  response.body();
+
+                    if (response.code() != 200) {
+//                        Log.e("Network connected","Response code = "+response.code());
+
+                        ResponseBody responseBody = response.errorBody();
+
+                        if (responseBody != null) {
+                            listener.onBodyError(responseBody);
+                        } else if (responseBody == null) {
+                            listener.onBodyErrorIsNull();
+                        }
+
+                    } else {
+                        listener.onResponse(categoriesRes);
+                    }
+
+
+                }catch (Exception e){
+                    listener.onFailure(e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SendScore> call, Throwable t) {
 
                 listener.onFailure(t);
 

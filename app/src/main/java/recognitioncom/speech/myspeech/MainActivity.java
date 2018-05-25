@@ -93,6 +93,15 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "Logout ", Toast.LENGTH_SHORT).show();
         }
 
+        if(co == 5){
+
+            fragmentManager.popBackStack();
+            fragmentManager.popBackStack();
+//            Toast.makeText(this, "Logout ", Toast.LENGTH_SHORT).show();
+        }
+
+
+
 
     }
 
