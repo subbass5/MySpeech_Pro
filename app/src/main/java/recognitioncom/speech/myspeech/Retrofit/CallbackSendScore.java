@@ -1,8 +1,7 @@
 package recognitioncom.speech.myspeech.Retrofit;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.LoginRes;
-import recognitioncom.speech.myspeech.Pojo.SendScore;
+import recognitioncom.speech.myspeech.Model.SendScore;
 
 public interface CallbackSendScore {
 

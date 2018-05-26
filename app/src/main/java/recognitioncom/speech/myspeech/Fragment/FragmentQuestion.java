@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -24,8 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.gson.JsonObject;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.SendScore;
+import recognitioncom.speech.myspeech.Model.SendScore;
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.CallbackSendScore;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
@@ -57,9 +54,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     int ansTrue ,scoreTmp;
     int choice = 0;
     MediaPlayer mPlayer;
-
     public static final String KEY_SCORE = "score";
-    public static final String KEY_SCORE_TMP = "score_tmp";
 
     @Nullable
     @Override
@@ -105,6 +100,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
 
     private void promptSpeechInput() {
 
+
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "th-TH");
@@ -144,10 +140,13 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
                         ans3.setChecked(true);
                     }
 
-                    onClickNext();
+                    if(ans1.isChecked() || ans2.isChecked() || ans3.isChecked()){
+                        onClickNext();
+                    }
+
 
                     if(result.get(0).equals("กลับสู่หน้าหลัก")){
-
+                        fragmentManager.popBackStack();
                     }
 
 
@@ -163,7 +162,6 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         try {
 
             JSONObject jsonObject = new JSONObject(getQuestion(category_id));
-
             playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
             url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
             tv_question.setText(url);
@@ -171,8 +169,10 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
             ans1.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS1));
             ans2.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS2));
             ans3.setText(jsonObject.getString(FragmentMainCategory.JSON_ANS3));
+
             ansTrue = Integer.parseInt(jsonObject.getString(FragmentMainCategory.JSON_SCORE));
 
+//            Toast.makeText(context, ""+ansTrue, Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -183,9 +183,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         try {
 
             JSONObject jsonObject = new JSONObject(getQuestion(category_id));
-            playSoundQuestion(jsonObject.getString(FragmentMainCategory.JSON_URL));
             url = jsonObject.getString(FragmentMainCategory.JSON_NAMES);
-
             MyTTS.getInstance(context).setLocale(new Locale("th"))
                     .speak(jsonObject.getString(FragmentMainCategory.JSON_NAMES)+"ตอบ  1"
                             +jsonObject.getString(FragmentMainCategory.JSON_ANS1)
@@ -211,33 +209,17 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
         }
     }
 
-    private Boolean chkAns(String result,int Choice){
-        String tmpStr="";
-        try {
-            JSONArray jsonArray = new JSONArray(dataAll);
-            JSONObject jsonObject = new JSONObject(jsonArray.get(Choice).toString());
-           if(result.equals(jsonObject.getString(FragmentMainCategory.JSON_ANS)))
-              return true;
-           else
-               return false;
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     private String  getQuestion(int index){
         String tmpStr = "";
 
         try {
+
             JSONArray jsonArray = new JSONArray(dataAll);
             tmpStr = ""+jsonArray.get(index);
-            Log.e("getQuestion "+index,tmpStr);
-            Log.e("getQuestion2 "+index,dataAll+" data arr = "+jsonArray.length());
 
         } catch (JSONException e) {
+
             Log.e("getQuestion "+index,e.getMessage());
         }
         return tmpStr;
@@ -261,6 +243,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
                 public void onCompletion(MediaPlayer mediaPlayer) {
 //                Toast.makeText(context,"End",Toast.LENGTH_SHORT).show();
                     try {
+
                         Speak_for_simple(choice);
                         promptSpeechInput();
 
@@ -293,40 +276,56 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     }
 
     private void onClickNext(){
+
+
+
         int AnswerNow = 0;
 //                Toast.makeText(context, ""+getIndexData(), Toast.LENGTH_SHORT).show();
         mPlayer.stop();
+
+        choice +=1;
+
+        if(ans1.isChecked()){
+            AnswerNow = 1;
+
+        }else if(ans2.isChecked()){
+            AnswerNow = 2;
+
+
+        }else if (ans3.isChecked()){
+            AnswerNow = 3;
+
+        }else {
+            Toast.makeText(context, "กรุณาเลือกข้อสอบก่อนส่ง", Toast.LENGTH_SHORT).show();
+        }
+
         if(choice < getIndexData()){
-            if(ans1.isChecked()){
-                AnswerNow = 1;
-                choice +=1;
 
-            }else if(ans2.isChecked()){
-                AnswerNow = 2;
-                choice +=1;
-
-            }else if (ans3.isChecked()){
-                AnswerNow = 3;
-                choice +=1;
-
-
-            }else {
-                Toast.makeText(context, "กรุณาเลือกข้อสอบก่อนส่ง", Toast.LENGTH_SHORT).show();
-
-            }
+//            Log.e("เช็คคำตอบ",ansTrue+"  , "+AnswerNow);
             if(ansTrue == AnswerNow) {
                 scoreTmp += 1;
                 editor.putInt(KEY_SCORE, scoreTmp);
                 editor.commit();
             }
+            if(ans1.isChecked() || ans2.isChecked() || ans3.isChecked()){
+                set_choice(choice);
+            }else {
+                Toast.makeText(context, "กรุณาเลือกข้อสอบก่อนส่ง", Toast.LENGTH_SHORT).show();
+            }
 
-            set_choice(choice);
+
 
         }else {
+
+            if(ansTrue == AnswerNow) {
+                scoreTmp += 1;
+                editor.putInt(KEY_SCORE, scoreTmp);
+                editor.commit();
+            }
             String name = sharedPreferences.getString(FragmentLogin.KEY_NAME,"");
             String category_id = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
             String ScoreTmp = ""+scoreTmp;
-            Log.e("Befor save","name = "+name+" score = "+ScoreTmp+" Category = "+category_id);
+//            Log.e("Befor save","name = "+name+" score = "+ScoreTmp+" Category = "+category_id);
             new NetworkConnectionManager().sendScore(sendScore,name,ScoreTmp,category_id);
 
 

@@ -3,7 +3,7 @@ package recognitioncom.speech.myspeech.Retrofit;
 import java.util.List;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.QuestionRes;
+import recognitioncom.speech.myspeech.Model.QuestionRes;
 
 public interface CallbackQuestionListenner {
     public void onResponse(List<QuestionRes> questionRes);

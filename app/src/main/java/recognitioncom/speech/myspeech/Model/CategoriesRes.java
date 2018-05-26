@@ -1,4 +1,4 @@
-package recognitioncom.speech.myspeech.Pojo;
+package recognitioncom.speech.myspeech.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

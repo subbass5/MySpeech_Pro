@@ -61,6 +61,7 @@ public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.My
             holder.setOnClickRecycleView(new RecycleViewOnClickListener() {
                 @Override
                 public void onClick(View view, int position, boolean isLongClick, MotionEvent motionEvent) {
+
 //                    Toast.makeText(context, "Click "+categories.get(position), Toast.LENGTH_SHORT).show();
                     editor.putString(FragmentLogin.KEY_CATEGORY,categories.get(position));
                     editor.putString(FragmentLogin.KEY_CATEGORY_ID,id.get(position));
@@ -109,7 +110,8 @@ public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.My
         else if(inStr.equals("หมวดสัตว์เลี้ยง"))
             return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/B.wav?alt=media&token=df42709f-ac5d-4907-8163-ee52a0a729cc";
         else if(inStr.equals("หมวดอวัยวะในร่างกาย"))
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/F.wav?alt=media&token=cff65da3-dbc2-4f87-a890-2e0377eac4b3";
+            //return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/F.wav?alt=media&token=cff65da3-dbc2-4f87-a890-2e0377eac4b3";
+            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/F.wav?alt=media&token=8217fb71-f1f1-4e61-9173-290a3178bff0";
         else if(inStr.equals("หมวดการช่วยเหลือตนเอง"))
             return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/G.wav?alt=media&token=8c88adf5-147c-4567-a66f-1a3d787c47c1";
         else

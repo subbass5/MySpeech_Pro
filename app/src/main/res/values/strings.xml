@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MySpeech</string>
+    <string name="app_name">Audio learning</string>
     <string name="HeaderLogin">เข้าสู่ระบบ</string>
     <string name="hintUsername">ชื่อ</string>
     <string name="hintPassword">รหัสผ่าน</string>

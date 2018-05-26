@@ -2,17 +2,17 @@ package recognitioncom.speech.myspeech.Retrofit;
 
 import java.util.List;
 
-import recognitioncom.speech.myspeech.Pojo.CategoriesRes;
-import recognitioncom.speech.myspeech.Pojo.LoginRes;
-import recognitioncom.speech.myspeech.Pojo.QuestionRes;
-import recognitioncom.speech.myspeech.Pojo.RegisterRes;
-import recognitioncom.speech.myspeech.Pojo.SendScore;
+import recognitioncom.speech.myspeech.Model.CategoriesRes;
+import recognitioncom.speech.myspeech.Model.LoginRes;
+import recognitioncom.speech.myspeech.Model.PlaySoundRes;
+import recognitioncom.speech.myspeech.Model.QuestionRes;
+import recognitioncom.speech.myspeech.Model.RegisterRes;
+import recognitioncom.speech.myspeech.Model.SendScore;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
 
 public interface APIService {
 
@@ -46,6 +46,11 @@ public interface APIService {
     @FormUrlEncoded
     @POST("api/api-save-score.php")
     Call<SendScore> sendScore(@Field("user") String username, @Field("score") String score, @Field("category_id") String cId);
+
+
+    @FormUrlEncoded
+    @POST("api/api-play-sound.php")
+    Call<List<PlaySoundRes>> getUrlSound(@Field("category_id") String cId);
 
 
 }

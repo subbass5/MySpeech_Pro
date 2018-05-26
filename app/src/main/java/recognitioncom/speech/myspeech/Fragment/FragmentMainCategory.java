@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -16,15 +15,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,15 +29,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.LoginRes;
-import recognitioncom.speech.myspeech.Pojo.QuestionRes;
+import recognitioncom.speech.myspeech.Model.QuestionRes;
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.CallbackQuestionListenner;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
-import recognitioncom.speech.myspeech.TTS.MyTTS;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -95,6 +88,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
         tv_header = v.findViewById(R.id.tv_header_category);
         sharedPreferences = getActivity().getSharedPreferences(FragmentLogin.MYFER, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
         Category = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY,"");
         UrlCategory = sharedPreferences.getString(FragmentLogin.KEY_URL_MAIN_CATEGORY,"");
         id_ = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
@@ -139,6 +133,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
     }
 
     private void promptSpeechInput() {
+
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "th-TH");
@@ -310,7 +305,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
 
 
                 }
-                Log.e(TAG,""+jsonArray);
+
                 editor.putInt(FragmentLogin.KEY_SIZE,questionRes.size());
                 editor.putString(FragmentLogin.KEY_DATA,jsonArray.toString());
                 editor.commit();

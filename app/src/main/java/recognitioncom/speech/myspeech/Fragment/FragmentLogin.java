@@ -1,7 +1,6 @@
 package recognitioncom.speech.myspeech.Fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,20 +15,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.Locale;
+
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.LoginRes;
+import recognitioncom.speech.myspeech.Model.LoginRes;
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.Retrofit.CallbackLoginListener;
+import recognitioncom.speech.myspeech.TTS.MyTTS;
 
 public class FragmentLogin extends Fragment implements View.OnClickListener{
 
@@ -109,7 +108,7 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
         et_user = v.findViewById(R.id.et_username);
 
-        et_user.setText("test");
+//        et_user.setText("test");
 
 
         sharedPreferences = getActivity().getSharedPreferences(MYFER,Context.MODE_PRIVATE);
@@ -134,6 +133,9 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
             progress.show();
 
             new NetworkConnectionManager().callLogin(listener,usr);
+
+        }else{
+            Toast.makeText(context, "กรุณากรอกข้อมูล ชื่อ", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -205,6 +207,10 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
         public void onResponse(LoginRes loginRes) {
             Log.e(TAG,""+loginRes.getName());
 
+            if(loginRes.getName().equals("null")){
+                Toast.makeText(context, "ไม่พบชื่อผู้ใช้กรุณาสมัครสมาชิก", Toast.LENGTH_SHORT).show();
+                MyTTS.getInstance(context).setLocale(new Locale("th")).speak("กรุณากรอกข้อมูลชื่อ");
+            }
 
             if(progress.isShowing()){
                 progress.dismiss();

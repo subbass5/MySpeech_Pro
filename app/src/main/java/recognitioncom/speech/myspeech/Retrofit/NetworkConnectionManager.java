@@ -1,7 +1,5 @@
 package recognitioncom.speech.myspeech.Retrofit;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -9,11 +7,12 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import recognitioncom.speech.myspeech.MainActivity;
-import recognitioncom.speech.myspeech.Pojo.CategoriesRes;
-import recognitioncom.speech.myspeech.Pojo.LoginRes;
-import recognitioncom.speech.myspeech.Pojo.QuestionRes;
-import recognitioncom.speech.myspeech.Pojo.RegisterRes;
-import recognitioncom.speech.myspeech.Pojo.SendScore;
+import recognitioncom.speech.myspeech.Model.CategoriesRes;
+import recognitioncom.speech.myspeech.Model.LoginRes;
+import recognitioncom.speech.myspeech.Model.PlaySoundRes;
+import recognitioncom.speech.myspeech.Model.QuestionRes;
+import recognitioncom.speech.myspeech.Model.RegisterRes;
+import recognitioncom.speech.myspeech.Model.SendScore;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -303,6 +302,61 @@ public class NetworkConnectionManager {
 
             @Override
             public void onFailure(Call<SendScore> call, Throwable t) {
+
+                listener.onFailure(t);
+
+            }
+
+
+        });
+    }
+    public void getUrlPlaysound(final CallbackPlaysound listener,String category){
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        APIService git = retrofit.create(APIService.class);
+        Call call = git.getUrlSound(category);
+
+
+        call.enqueue(new Callback<List<PlaySoundRes>>() {
+
+            @Override
+            public void onResponse(Call<List<PlaySoundRes>> call, Response<List<PlaySoundRes>> response) {
+
+                try {
+
+                    List<PlaySoundRes> categoriesRes =  response.body();
+
+                    if (response.code() != 200) {
+//                        Log.e("Network connected","Response code = "+response.code());
+
+                        ResponseBody responseBody = response.errorBody();
+
+                        if (responseBody != null) {
+                            listener.onBodyError(responseBody);
+                        } else if (responseBody == null) {
+                            listener.onBodyErrorIsNull();
+                        }
+
+                    } else {
+                        listener.onResponse(categoriesRes);
+                    }
+
+
+                }catch (Exception e){
+                    listener.onFailure(e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PlaySoundRes>> call, Throwable t) {
 
                 listener.onFailure(t);
 

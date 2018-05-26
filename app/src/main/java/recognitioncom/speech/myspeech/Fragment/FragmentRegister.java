@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.RegisterRes;
+import recognitioncom.speech.myspeech.Model.RegisterRes;
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.Retrofit.CallbackRegisterListener;

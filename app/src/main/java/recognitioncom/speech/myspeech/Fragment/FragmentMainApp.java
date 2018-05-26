@@ -7,14 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.speech.RecognizerIntent;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -34,7 +30,8 @@ import java.util.List;
 import java.util.Locale;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.CategoriesRes;
+import recognitioncom.speech.myspeech.Model.CategoriesRes;
+import recognitioncom.speech.myspeech.Model.DataModel;
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Recycleview.MainappRecycleAdp;
 import recognitioncom.speech.myspeech.Retrofit.CallbackCategoriesListener;
@@ -54,6 +51,7 @@ public class FragmentMainApp extends Fragment {
     List<String> categories;
     List<String>  urlList;
     List<String> id;
+
     SwipeRefreshLayout mSwipeRefreshLayout;
 
     SharedPreferences sharedPreferences ;
@@ -189,18 +187,18 @@ public class FragmentMainApp extends Fragment {
             e.printStackTrace();
         }
 
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-//                Toast.makeText(context,"End",Toast.LENGTH_SHORT).show();
-                try {
-                    promptSpeechInput();
-                }catch (Exception e){
-
-                }
-
-            }
-        });
+//        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mediaPlayer) {
+////                Toast.makeText(context,"End",Toast.LENGTH_SHORT).show();
+//                try {
+//                    promptSpeechInput();
+//                }catch (Exception e){
+//
+//                }
+//
+//            }
+//        });
     }
 
     private void promptSpeechInput() {
@@ -224,13 +222,19 @@ public class FragmentMainApp extends Fragment {
 
 
     private void setGoFragment(String id,String input){
+        DataModel dataModel = new DataModel();
+        String getUrl = dataModel.getUrl(input);
 
         editor.putString(FragmentLogin.KEY_CATEGORY_ID,id);
         editor.putString(FragmentLogin.KEY_CATEGORY,input);
+        editor.putString(FragmentLogin.KEY_URL_MAIN_CATEGORY,getUrl);
         editor.commit();
-
+        Log.e(TAG,getUrl);
+//
         FragmentMainCategory mainCategory = new FragmentMainCategory();
         fragmentTran(mainCategory,null);
+
+
     }
 
     public void fragmentTran(Fragment fragment, Bundle bundle){
@@ -254,13 +258,15 @@ public class FragmentMainApp extends Fragment {
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
 //                    Toast.makeText(context, result.get(0), Toast.LENGTH_SHORT).show();
-                    for (int i = 0;i<categories.size();i++){
-                        if(categories.get(i).equals(result.get(0)) || result.get(0).equals(""+(i+1))){
-                            setGoFragment(""+(i+1),categories.get(i));
-//                            MyTTS.getInstance(context).setLocale(new Locale("th")).speak("เข้าสู่โหมด "+result.get(0));
+
+                    for (int i=0;i<categories.size();i++){
+
+                        if(categories.get(i).equals(result.get(0)) || id.get(i).equals(""+result.get(0))){
+                            setGoFragment(id.get(i),categories.get(i));
 
                         }
                     }
+
                     if(result.get(0).equals("ออกจากระบบ")){
                         editor.clear();
                         editor.commit();

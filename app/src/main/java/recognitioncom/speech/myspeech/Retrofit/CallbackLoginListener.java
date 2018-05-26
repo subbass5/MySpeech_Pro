@@ -1,8 +1,7 @@
 package recognitioncom.speech.myspeech.Retrofit;
 
 import okhttp3.ResponseBody;
-import recognitioncom.speech.myspeech.Pojo.LoginRes;
-import retrofit2.Retrofit;
+import recognitioncom.speech.myspeech.Model.LoginRes;
 
 public interface CallbackLoginListener {
 

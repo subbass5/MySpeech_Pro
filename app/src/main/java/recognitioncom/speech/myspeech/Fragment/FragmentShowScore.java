@@ -9,6 +9,7 @@ import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ public class FragmentShowScore extends Fragment {
     Context context;
     SwipeRefreshLayout swipeRefreshLayout;
     private final int REQ_CODE_SPEECH_INPUT = 1001;
-
+    FragmentManager fragmentManager ;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class FragmentShowScore extends Fragment {
     }
 
     private void init(View v){
-
+        fragmentManager = getActivity().getSupportFragmentManager();
         swipeRefreshLayout = v.findViewById(R.id.swipeRefreshLayout);
         tv_score = v.findViewById(R.id.tv_score);
         context = getContext();
@@ -97,7 +98,8 @@ public class FragmentShowScore extends Fragment {
 
 
                     if(result.get(0).equals("กลับสู่หน้าหลัก")){
-
+                        fragmentManager.popBackStack();
+                        fragmentManager.popBackStack();
                     }
 
 
