@@ -77,21 +77,6 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide(); // hide tools bar
 
-//        MyTTS.getInstance(getContext()).setLocale(new Locale("th"))
-//                .speak("ยินดีต้อนรับสู่เกมทายเสียง");
-//        new CountDownTimer(3000,1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                MyTTS.getInstance(getContext()).setLocale(new Locale("th"))
-//                        .speak("ดึงหน้าจอลงเพื่อสั่งงาน");
-//            }
-//        }.start();
-
         init(v);
 
         return v;
@@ -210,6 +195,7 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
             if(loginRes.getName().equals("null")){
                 Toast.makeText(context, "ไม่พบชื่อผู้ใช้กรุณาสมัครสมาชิก", Toast.LENGTH_SHORT).show();
                 MyTTS.getInstance(context).setLocale(new Locale("th")).speak("กรุณากรอกข้อมูลชื่อ");
+
             }
 
             if(progress.isShowing()){

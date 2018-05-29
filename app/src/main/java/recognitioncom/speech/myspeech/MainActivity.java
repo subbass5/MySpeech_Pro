@@ -2,6 +2,7 @@ package recognitioncom.speech.myspeech;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -12,13 +13,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.widget.Toast;
+
+import java.util.Locale;
+
 import recognitioncom.speech.myspeech.Fragment.FragmentLogin;
+import recognitioncom.speech.myspeech.TTS.MyTTS;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
 
     FragmentLogin loginFrg;
-    public static final String BASE_URL = "http://profile2.chiangraisoftware.com/";    //"http://mumei-system.ml/";
+    public static final String BASE_URL = "http://profile2.chiangraisoftware.com/";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentManager fragmentManager;
@@ -82,26 +87,21 @@ public class MainActivity extends AppCompatActivity {
         boolean doRegister = sharedPreferences.getBoolean(FragmentLogin.KEY_DO_REGISTER,false);
 
         int co = fragmentManager.getBackStackEntryCount();
-//        Toast.makeText(this, ""+co, Toast.LENGTH_SHORT).show();
+
         if(co > 2 || doRegister){
             fragmentManager.popBackStack();
-        }
-
-        if(co == 2 && !doRegister){
+        }else if(co == 2 && !doRegister){
 
             onLogout();
-//            Toast.makeText(this, "Logout ", Toast.LENGTH_SHORT).show();
-        }
-
-        if(co == 5){
+        }else if(co == 5){
 
             fragmentManager.popBackStack();
             fragmentManager.popBackStack();
-//            Toast.makeText(this, "Logout ", Toast.LENGTH_SHORT).show();
+        }else {
+            Intent intent = new Intent(MainActivity.this,ManualAppsActivity.class);
+            startActivity(intent);
+            finish();
         }
-
-
-
 
     }
 
