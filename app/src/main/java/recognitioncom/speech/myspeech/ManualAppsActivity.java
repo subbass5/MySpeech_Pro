@@ -21,14 +21,19 @@ import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.TTS.MyTTS;
 
 public class ManualAppsActivity extends AppCompatActivity{
+
     Context context;
+
     SwipeRefreshLayout swipeRefreshLayout;
+
     MediaPlayer mPlayer;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.initialize_app);
         getSupportActionBar().hide();
+
         initInstance();
 
     }
@@ -37,8 +42,10 @@ public class ManualAppsActivity extends AppCompatActivity{
 
      context = getApplicationContext();
      mPlayer = new MediaPlayer();
+
+     //call api , call url
      new NetworkConnectionManager().callFirstSound(listener);
-//     MyTTS.getInstance(context).setLocale(new Locale("th-TH")).speak(getString(R.string.initStr)+getString(R.string.tv_bottom));
+
      swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
      swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
          @Override
@@ -47,6 +54,7 @@ public class ManualAppsActivity extends AppCompatActivity{
              try{
 
                  mPlayer.stop();
+
                  MyTTS.getInstance(context).clear();
                  Intent goMain = new Intent(ManualAppsActivity.this,MainActivity.class);
                  startActivity(goMain);
@@ -99,10 +107,12 @@ public class ManualAppsActivity extends AppCompatActivity{
 //        });
     }
 
+
     CallbackFirstSoundListener  listener = new CallbackFirstSoundListener() {
         @Override
         public void onResponse(FirstSoundModel firstSoundModel) {
-            Log.e("url",firstSoundModel.getPath());
+
+
             try {
 
                 mPlayer.setDataSource(firstSoundModel.getPath());
@@ -132,6 +142,10 @@ public class ManualAppsActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        MyTTS.getInstance(context).clear();
+
+//        mPlayer.stop();
+
+//        MyTTS.getInstance(context).clear();
+
     }
 }

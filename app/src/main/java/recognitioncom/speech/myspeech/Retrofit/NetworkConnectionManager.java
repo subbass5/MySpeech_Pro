@@ -22,7 +22,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkConnectionManager {
+
     private String TAG = "<NetworkConnectionManager>";
+
     public NetworkConnectionManager(){
 
     }
@@ -30,11 +32,11 @@ public class NetworkConnectionManager {
     public void callFirstSound(final CallbackFirstSoundListener listener){
 
         Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
+                        .setLenient()
+                        .create();
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MainActivity.BASE_URL)
+                .baseUrl(MainActivity.BASE_URL)       //ประกาศ url หลักของ server
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -56,20 +58,29 @@ public class NetworkConnectionManager {
                         ResponseBody responseBody = response.errorBody();
 
                         if (responseBody != null) {
+
                             listener.onBodyError(responseBody);
+
                         } else if (responseBody == null) {
+
                             listener.onBodyErrorIsNull();
+
                         }
 
                     } else {
+
                         listener.onResponse(loginRes);
+
                     }
 
 
                 }catch (Exception e){
+
                     listener.onFailure(e);
+
                 }
             }
+
             @Override
             public void onFailure(Call<FirstSoundModel> call, Throwable t) {
 
@@ -498,6 +509,7 @@ public class NetworkConnectionManager {
                 .build();
 
         APIService git = retrofit.create(APIService.class);
+        //ส่งข้อมูล
         Call call = git.getPlaySound(category);
 
 

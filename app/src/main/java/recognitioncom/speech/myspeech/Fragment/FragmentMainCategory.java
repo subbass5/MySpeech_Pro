@@ -56,11 +56,6 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
     FragmentManager fragmentManager;
     ProgressDialog progressDialog;
     String id_;
-//jsonObject.put("question_name",""+questionRes.get(i).getQuestionName());
-//                    jsonObject.put("ans1",""+questionRes.get(i).getAnswer1());
-//                    jsonObject.put("ans2",""+questionRes.get(i).getAnswer2());
-//                    jsonObject.put("ans3",""+questionRes.get(i).getAnswer3());
-//                    jsonObject.put("url_sund",""+questionRes.get(i).getAnswer4());
 
     public static final String JSON_ID = "id_";
     public static final String JSON_NAMES = "question_name";
@@ -99,9 +94,8 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
         id_ = sharedPreferences.getString(MyFer.ID_CATE,"");  //get id
 
 
-
         try {
-            Log.e(TAG,UrlCategory+"   "+id_);
+//            Log.e(TAG,UrlCategory+"   "+id_);
             mPlayer = new MediaPlayer();
             mPlayer.setDataSource(UrlCategory);
             mPlayer.prepare();
@@ -158,11 +152,13 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
 
 
     private void btnPlaySound(){
+
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(getString(R.string.progressLoading));
         progressDialog.show();
 
 //        dataCategory(Category);
+        //call api
         new NetworkConnectionManager().getPlaylist(playlistListenner,id_);
 
 

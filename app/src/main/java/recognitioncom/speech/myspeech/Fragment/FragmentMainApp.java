@@ -61,15 +61,15 @@ public class FragmentMainApp extends Fragment {
     List<String> id;
     List<Map<String,Object>> val;
 
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout mSwipeRefreshLayout;  //ดึงหน้าจอ
 
     SharedPreferences sharedPreferences ;
     SharedPreferences.Editor editor;
+
     FragmentManager fragmentManager;
 
-    //play sound
-    String url = MainActivity.BASE_URL+"/Sound/A.wav";
     MediaPlayer mPlayer;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,12 +82,15 @@ public class FragmentMainApp extends Fragment {
     private void initInstance(View v){
 
             ((AppCompatActivity) getActivity()).getSupportActionBar().hide(); // hide tools bar
+
             fragmentManager = getActivity().getSupportFragmentManager();
             context = getContext();
+
             recyclerView = v.findViewById(R.id.mainApprecycle);
             recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
             adp = new MainappRecycleAdp(context);
+
 
             categories = new ArrayList<>();
             urlList = new ArrayList<>();
@@ -168,13 +171,14 @@ public class FragmentMainApp extends Fragment {
                 result.put(MyFer.URL_CATE_MAIN,res.get(i).getMainUrl());
                 result.put(MyFer.URL_CATE_PLAY,res.get(i).getPlaySound());
                 val.add(result);
-//                categories.add("หมวด"+res.get(i).getCategoryName());
-//                id.add(res.get(i).getId());
+
             }
-//            Log.e(TAG,new Gson().toJson(val));
+
             adp.UpdateData(val);
             recyclerView.setAdapter(adp);
+
             playMainSound();
+
 
         }
 
@@ -208,7 +212,6 @@ public class FragmentMainApp extends Fragment {
     private void playMainSound(){
 
         // Initialize a new media player instance
-
 
         // Set the media player audio stream type
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -253,6 +256,7 @@ public class FragmentMainApp extends Fragment {
 
 
         try {
+
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "th-TH");
@@ -260,10 +264,13 @@ public class FragmentMainApp extends Fragment {
                     getString(R.string.speech_prompt));
 
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+
         } catch (ActivityNotFoundException a) {
+
             Toast.makeText(context,
                     getString(R.string.speech_not_supported),
                     Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -273,11 +280,12 @@ public class FragmentMainApp extends Fragment {
         DataModel dataModel = new DataModel();
         String getUrl = dataModel.getUrl(input);
 
-        editor.putString(FragmentLogin.KEY_CATEGORY_ID,id);
-        editor.putString(FragmentLogin.KEY_CATEGORY,input);
-        editor.putString(FragmentLogin.KEY_URL_MAIN_CATEGORY,getUrl);
+        editor.putString(FragmentLogin.KEY_CATEGORY_ID,id);  // ไอดีหมวดหมู่
+        editor.putString(FragmentLogin.KEY_CATEGORY,input);   //ชื่อ หมวดหมู่
+        editor.putString(FragmentLogin.KEY_URL_MAIN_CATEGORY,getUrl);  //url หน้าหลัก
         editor.commit();
-        Log.e(TAG,getUrl);
+
+//        Log.e(TAG,getUrl);
 //
         FragmentMainCategory mainCategory = new FragmentMainCategory();
         fragmentTran(mainCategory,null);
@@ -292,26 +300,30 @@ public class FragmentMainApp extends Fragment {
         frgTran.replace(R.id.contentApp, fragment).addToBackStack(null).commit();
     }
     /**
-     * Receiving speech input
+     * ผลลัพธจากการพูด
      * */
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
+
                 if (resultCode == RESULT_OK && null != data) {
 
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-//                    Toast.makeText(context, result.get(0), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, ""+result.get(0), Toast.LENGTH_SHORT).show();
 
                     for (int i=0;i<val.size();i++){
 
                         if(val.get(i).get(MyFer.CATE).equals(result.get(0)) ||
                                 val.get(i).get(MyFer.ID_CATE).equals(""+result.get(0))){
+
                             setGoFragment(val.get(i).get(MyFer.ID_CATE).toString(),val.get(i).get(MyFer.CATE).toString());
+
 
                         }
                     }
@@ -320,7 +332,6 @@ public class FragmentMainApp extends Fragment {
                         editor.clear();
                         editor.commit();
                         fragmentManager.popBackStack();
-//                        Toast.makeText(context, "ออกจากระบบ", Toast.LENGTH_SHORT).show();
                         MyTTS.getInstance(context).setLocale(new Locale("th")).speak("ตุณได้ออกจากระบบเรียบร้อยแล้ว");
 
                     }

@@ -38,11 +38,11 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
     private EditText et_user;
 
 
-
     public static final String MYFER = "myFer";
+
     public static final String KEY_ID = "idUser";
     public static final String KEY_NAME ="nameUser";
-    public static final String KEY_COUNTCHECK = "emailUser";
+    public static final String KEY_COUNTCHECK = "countCheck";
     public static final String KEY_CATEGORY = "category";
     public static final String KEY_URL_MAIN_CATEGORY = "mainCategories";
     public static final String KEY_DO_REGISTER = "doRegister";
@@ -60,11 +60,11 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
 
     private String usr = "";
-    private String pwd = "";
+
     private String TAG = "FragmentLogin";
-    private CheckBox checkBox;
     private ProgressDialog progress;
-     int Count = 0;
+    int Count = 0;
+
 
     @Nullable
     @Override
@@ -82,6 +82,8 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
         //init instance
         context = getContext();
+
+
         v.findViewById(R.id.btn_login).setOnClickListener(this);
         v.findViewById(R.id.tv_register).setOnClickListener(this);
 
@@ -109,18 +111,19 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
         if(usr.length() > 0){
 
+            // popup loading
             progress = new ProgressDialog(context);
             progress.setMessage(getString(R.string.progressLoading));
             progress.show();
 
+            //call api login
             new NetworkConnectionManager().callLogin(listener,usr);
 
         }else{
+
             Toast.makeText(context, "กรุณากรอกข้อมูล ชื่อ", Toast.LENGTH_SHORT).show();
 
         }
-
-
 
 
     }
@@ -147,25 +150,25 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
     private void checkTuch(final int input){
 
         LayoutInflater layoutInflater = getLayoutInflater();
+
         View view = layoutInflater.inflate(R.layout.custom_tuch_dialog,null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         builder.setView(view);
+
         Button btn = view.findViewById(R.id.button);
+
         final AlertDialog dialog = builder.create();
 
 
        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(context, "do click = "+Count+" input = "+input, Toast.LENGTH_SHORT).show();
 
                 if(Count == input){
 
-//                    Toast.makeText(context
-//                            , "CLick success", Toast.LENGTH_SHORT).show();
-                    FragmentMainApp fragmentMainApp = new FragmentMainApp();
+                   FragmentMainApp fragmentMainApp = new FragmentMainApp();
                     fragmentTran(fragmentMainApp,null);
                     dialog.dismiss();
 
@@ -183,17 +186,20 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
     }
 
+
+    //callback จาก server
     CallbackLoginListener listener = new CallbackLoginListener() {
         @Override
         public void onResponse(LoginRes loginRes) {
-            Log.e(TAG,""+loginRes.getName());
+//            Log.e(TAG,""+loginRes.getName());
 
             if(loginRes.getName().equals("null")){
                 Toast.makeText(context, "ไม่พบชื่อผู้ใช้กรุณาสมัครสมาชิก", Toast.LENGTH_SHORT).show();
-                MyTTS.getInstance(context).setLocale(new Locale("th")).speak("กรุณากรอกข้อมูลชื่อ");
+//                MyTTS.getInstance(context).setLocale(new Locale("th")).speak("กรุณากรอกข้อมูลชื่อ");
 
             }
 
+            //ปิด alert loading
             if(progress.isShowing()){
                 progress.dismiss();
 
@@ -248,7 +254,6 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
         }
     };
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -260,7 +265,6 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
                 break;
         }
     }
-
 
 
 }

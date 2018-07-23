@@ -69,6 +69,7 @@ public class FragmentListenCategory extends Fragment{
 
         context = getContext();
         tv_header = v.findViewById(R.id.tv_header);
+
         tv_no1 = v.findViewById(R.id.tv_no1);
         tv_no2 = v.findViewById(R.id.tv_no2);
         tv_no3 = v.findViewById(R.id.tv_no3);

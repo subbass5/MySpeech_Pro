@@ -10,6 +10,7 @@ public class MyApplication extends Application{
         super.onCreate();
         initfont();
     }
+
     public void initfont(){
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Kanit-Light.ttf")

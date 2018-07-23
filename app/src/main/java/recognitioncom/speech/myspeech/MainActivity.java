@@ -23,7 +23,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
 
     FragmentLogin loginFrg;
-    public static final String BASE_URL = "https://projactdbdemo.000webhostapp.com/";//"http://cpe11dev.hol.es/";  //"http://profile2.chiangraisoftware.com/";
+
+    //path to server
+    public static final String BASE_URL = "https://projactdbdemo.000webhostapp.com/"; //"http://cpe11dev.hol.es/";  //"http://profile2.chiangraisoftware.com/";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentManager fragmentManager;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         loginFrg = new FragmentLogin();
         fragmentTran(loginFrg,null);
 
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onLogout(){
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.logout));
         builder.setPositiveButton(getString(R.string.submit), new DialogInterface.OnClickListener() {
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
                 editor.clear();
                 editor.commit();
+                // back fragment
                 fragmentManager.popBackStack();
 
             }
@@ -86,27 +91,33 @@ public class MainActivity extends AppCompatActivity {
 //        super.onBackPressed();
 
         try{
+
             boolean doRegister = sharedPreferences.getBoolean(FragmentLogin.KEY_DO_REGISTER,false);
 
             int co = fragmentManager.getBackStackEntryCount();
+
             String page_now = sharedPreferences.getString("page","");
 
             if(co > 2 || doRegister){
+
                 fragmentManager.popBackStack();
+
             }else if(co == 2 && !doRegister){
 
                 onLogout();
 
             }else if(page_now.equals("SAVE_SCORE")){
+                // ย้อนหลับสองครั้ง
+                fragmentManager.popBackStack();
+                fragmentManager.popBackStack();
 
-                fragmentManager.popBackStack();
-                fragmentManager.popBackStack();
 
             }else {
                 Intent intent = new Intent(MainActivity.this,ManualAppsActivity.class);
                 startActivity(intent);
                 finish();
             }
+
         }catch (Exception e){
 
         }

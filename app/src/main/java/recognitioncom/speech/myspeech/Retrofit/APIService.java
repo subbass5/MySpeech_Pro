@@ -50,6 +50,7 @@ public interface APIService {
     @POST("api/api-play-sound.php")
     Call<List<PlaySoundRes>> getUrlSound(@Field("category_id") String cId);
 
+
     @FormUrlEncoded
     @POST("api/api-play-sound.php")
     Call<List<PlayListModel>> getPlaySound(@Field("category_id") String cId);
