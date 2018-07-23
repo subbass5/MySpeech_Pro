@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,16 +20,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Map;
 
 import recognitioncom.speech.myspeech.Fragment.FragmentLogin;
 import recognitioncom.speech.myspeech.Fragment.FragmentMainCategory;
 import recognitioncom.speech.myspeech.R;
+import recognitioncom.speech.myspeech.Util.MyFer;
 
 public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.MyHolder> {
 
     Context context;
-    List<String> categories;
-    List<String> id;
+    List<Map<String,Object>> val;
+
     SharedPreferences sharedPreferences ;
     SharedPreferences.Editor editor;
 
@@ -39,11 +42,9 @@ public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.My
     }
 
 
-    public void UpdateData(List<String> id,List<String> categories) {
+    public void UpdateData(List<Map<String, Object>> val) {
 
-        this.categories = categories;
-        this.id = id;
-
+        this.val = val;
 
     }
 
@@ -57,15 +58,19 @@ public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.My
 
     @Override
     public void onBindViewHolder(@NonNull MainappRecycleAdp.MyHolder holder, final int position) {
-            holder.tv_category.setText(categories.get(position));
+
+        holder.tv_category.setText(""+val.get(position).get(MyFer.CATE));
+//        Toast.makeText(context, "Bind : "+val.get(position).get(MyFer.CATE), Toast.LENGTH_SHORT).show();
+
             holder.setOnClickRecycleView(new RecycleViewOnClickListener() {
                 @Override
                 public void onClick(View view, int position, boolean isLongClick, MotionEvent motionEvent) {
 
 //                    Toast.makeText(context, "Click "+categories.get(position), Toast.LENGTH_SHORT).show();
-                    editor.putString(FragmentLogin.KEY_CATEGORY,categories.get(position));
-                    editor.putString(FragmentLogin.KEY_CATEGORY_ID,id.get(position));
-                    editor.putString(FragmentLogin.KEY_URL_MAIN_CATEGORY,getUrl(categories.get(position)));
+                    editor.putString(MyFer.ID_CATE,""+val.get(position).get(MyFer.ID_CATE));
+                    editor.putString(MyFer.CATE,""+val.get(position).get(MyFer.CATE));
+                    editor.putString(MyFer.URL_CATE_MAIN,""+val.get(position).get(MyFer.URL_CATE_MAIN));
+                    editor.putString(MyFer.URL_CATE_PLAY,""+val.get(position).get(MyFer.URL_CATE_PLAY));
                     editor.commit();
 
                     FragmentMainCategory mainCategory = new FragmentMainCategory();
@@ -89,7 +94,8 @@ public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.My
     @Override
     public int getItemCount() {
 
-        return categories.size();
+//        return 0;
+        return val.size();
 
     }
 
@@ -98,24 +104,6 @@ public class MainappRecycleAdp extends RecyclerView.Adapter<MainappRecycleAdp.My
         FragmentManager fragmentManager =((AppCompatActivity) context).getSupportFragmentManager();
         FragmentTransaction frgTran = fragmentManager.beginTransaction();
         frgTran.replace(R.id.contentApp, fragment).addToBackStack(null).commit();
-    }
-    private String getUrl(String inStr){
-
-        if(inStr.equals("หมวดเตือนภัย"))
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/D.wav?alt=media&token=25e2de0a-39cb-4c75-9da9-24389d10c05f";
-        else if(inStr.equals("หมวดยานพาหนะ"))
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/E.wav?alt=media&token=01c1f7c7-94b1-4878-b121-c49c199dfa19";
-        else if(inStr.equals("หมวดสัตว์อันตราย"))
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/C.wav?alt=media&token=19ff261a-e63f-4005-9894-fa17924d90f4";
-        else if(inStr.equals("หมวดสัตว์เลี้ยง"))
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/B.wav?alt=media&token=df42709f-ac5d-4907-8163-ee52a0a729cc";
-        else if(inStr.equals("หมวดอวัยวะในร่างกาย"))
-            //return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/F.wav?alt=media&token=cff65da3-dbc2-4f87-a890-2e0377eac4b3";
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/F.wav?alt=media&token=8217fb71-f1f1-4e61-9173-290a3178bff0";
-        else if(inStr.equals("หมวดการช่วยเหลือตนเอง"))
-            return "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/G.wav?alt=media&token=8c88adf5-147c-4567-a66f-1a3d787c47c1";
-        else
-            return "null";
     }
 
 

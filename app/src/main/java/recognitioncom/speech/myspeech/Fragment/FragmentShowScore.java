@@ -45,13 +45,17 @@ public class FragmentShowScore extends Fragment {
     }
 
     private void init(View v){
+
         fragmentManager = getActivity().getSupportFragmentManager();
         swipeRefreshLayout = v.findViewById(R.id.swipeRefreshLayout);
         tv_score = v.findViewById(R.id.tv_score);
         context = getContext();
         sharedPreferences = getActivity().getSharedPreferences(FragmentLogin.MYFER, Context.MODE_PRIVATE);
         score = sharedPreferences.getInt(FragmentQuestion.KEY_SCORE,0);
+        editor = sharedPreferences.edit();
 
+        editor.putString("page","SAVE_SCORE");
+        editor.commit();
 
         MyTTS.getInstance(context).setLocale(new Locale("th")).speak("คุณได้คะแนนรวมทั้งหมด"+ score+"  คะแนน");
         tv_score.setText(""+score +" คะแนน ");
@@ -94,7 +98,6 @@ public class FragmentShowScore extends Fragment {
 
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
 
 
                     if(result.get(0).equals("กลับสู่หน้าหลัก")){

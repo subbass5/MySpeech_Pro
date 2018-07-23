@@ -37,6 +37,7 @@ import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.CallbackSendScore;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.TTS.MyTTS;
+import recognitioncom.speech.myspeech.Util.MyFer;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -62,6 +63,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
 
         View v = inflater.inflate(R.layout.question_page,container,false);
         init(v);
+
         return v;
 
     }
@@ -271,8 +273,12 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
     @Override
     public void onStop() {
         super.onStop();
+        try {
+            mPlayer.stop();
+        }catch (Exception e){
 
-        mPlayer.stop();
+        }
+
     }
 
     private void onClickNext(){
@@ -323,7 +329,7 @@ public class FragmentQuestion extends Fragment implements View.OnClickListener{
                 editor.commit();
             }
             String name = sharedPreferences.getString(FragmentLogin.KEY_NAME,"");
-            String category_id = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
+            String category_id = sharedPreferences.getString(MyFer.ID_CATE,"");
             String ScoreTmp = ""+scoreTmp;
 //            Log.e("Befor save","name = "+name+" score = "+ScoreTmp+" Category = "+category_id);
             new NetworkConnectionManager().sendScore(sendScore,name,ScoreTmp,category_id);

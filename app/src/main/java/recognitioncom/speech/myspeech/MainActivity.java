@@ -23,7 +23,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
 
     FragmentLogin loginFrg;
-    public static final String BASE_URL = "http://profile2.chiangraisoftware.com/";
+    public static final String BASE_URL = "https://projactdbdemo.000webhostapp.com/";//"http://cpe11dev.hol.es/";  //"http://profile2.chiangraisoftware.com/";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     FragmentManager fragmentManager;
@@ -84,24 +84,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        boolean doRegister = sharedPreferences.getBoolean(FragmentLogin.KEY_DO_REGISTER,false);
 
-        int co = fragmentManager.getBackStackEntryCount();
+        try{
+            boolean doRegister = sharedPreferences.getBoolean(FragmentLogin.KEY_DO_REGISTER,false);
 
-        if(co > 2 || doRegister){
-            fragmentManager.popBackStack();
-        }else if(co == 2 && !doRegister){
+            int co = fragmentManager.getBackStackEntryCount();
+            String page_now = sharedPreferences.getString("page","");
 
-            onLogout();
-        }else if(co == 5){
+            if(co > 2 || doRegister){
+                fragmentManager.popBackStack();
+            }else if(co == 2 && !doRegister){
 
-            fragmentManager.popBackStack();
-            fragmentManager.popBackStack();
-        }else {
-            Intent intent = new Intent(MainActivity.this,ManualAppsActivity.class);
-            startActivity(intent);
-            finish();
+                onLogout();
+
+            }else if(page_now.equals("SAVE_SCORE")){
+
+                fragmentManager.popBackStack();
+                fragmentManager.popBackStack();
+
+            }else {
+                Intent intent = new Intent(MainActivity.this,ManualAppsActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }catch (Exception e){
+
         }
+
 
     }
 

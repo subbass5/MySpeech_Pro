@@ -24,19 +24,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
+import recognitioncom.speech.myspeech.MainActivity;
 import recognitioncom.speech.myspeech.Model.CategoriesRes;
 import recognitioncom.speech.myspeech.Model.DataModel;
+import recognitioncom.speech.myspeech.Model.FirstSoundModel;
 import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Recycleview.MainappRecycleAdp;
 import recognitioncom.speech.myspeech.Retrofit.CallbackCategoriesListener;
+import recognitioncom.speech.myspeech.Retrofit.CallbackFirstSoundListener;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.TTS.MyTTS;
+import recognitioncom.speech.myspeech.Util.MyFer;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,6 +59,7 @@ public class FragmentMainApp extends Fragment {
     List<String> categories;
     List<String>  urlList;
     List<String> id;
+    List<Map<String,Object>> val;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -59,7 +68,7 @@ public class FragmentMainApp extends Fragment {
     FragmentManager fragmentManager;
 
     //play sound
-    String url = "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/A.wav?alt=media&token=a077b85a-c966-4d3d-bd22-3c250b762550";
+    String url = MainActivity.BASE_URL+"/Sound/A.wav";
     MediaPlayer mPlayer;
     @Nullable
     @Override
@@ -71,8 +80,7 @@ public class FragmentMainApp extends Fragment {
 
 
     private void initInstance(View v){
-//        MyTTS.getInstance(getContext()).setLocale(new Locale("th"))
-//                .speak("พดเพ้ได้ได");
+
             ((AppCompatActivity) getActivity()).getSupportActionBar().hide(); // hide tools bar
             fragmentManager = getActivity().getSupportFragmentManager();
             context = getContext();
@@ -84,17 +92,7 @@ public class FragmentMainApp extends Fragment {
             categories = new ArrayList<>();
             urlList = new ArrayList<>();
             id = new ArrayList<>();
-
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(getString(R.string.progressLoading));
-            progressDialog.show();
-
-            try {
-                mPlayer = new MediaPlayer();
-                mPlayer.setDataSource(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            val = new ArrayList<>();
 
             mSwipeRefreshLayout = v.findViewById(R.id.swipeRefreshLayout);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -113,21 +111,68 @@ public class FragmentMainApp extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences(FragmentLogin.MYFER,Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        new NetworkConnectionManager().callCategories(listener);
+        new NetworkConnectionManager().callUrlmainapp(callbackURl);
+
 
     }
+
+    CallbackFirstSoundListener callbackURl = new CallbackFirstSoundListener() {
+        @Override
+        public void onResponse(FirstSoundModel firstSoundModel) {
+
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(getString(R.string.progressLoading));
+            progressDialog.show();
+
+            try {
+                mPlayer = new MediaPlayer();
+                mPlayer.setDataSource(firstSoundModel.getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            new NetworkConnectionManager().callCategories(listener);
+
+        }
+
+        @Override
+        public void onBodyError(ResponseBody responseBodyError) {
+
+        }
+
+        @Override
+        public void onBodyErrorIsNull() {
+
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+
+        }
+    };
+
 
     CallbackCategoriesListener listener = new CallbackCategoriesListener() {
         @Override
         public void onResponse(List<CategoriesRes> res) {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-            for (int i  = 0; i<res.size();i++){
-                categories.add("หมวด"+res.get(i).getCategoryName());
-                id.add(res.get(i).getId());
-            }
 
-            adp.UpdateData(id,categories);
+
+
+            for (int i  = 0; i<res.size();i++){
+
+                Map<String,Object> result = new HashMap<>();
+                result.put(MyFer.ID_CATE,res.get(i).getId());
+                result.put(MyFer.CATE,res.get(i).getCategoryName());
+                result.put(MyFer.URL_CATE_MAIN,res.get(i).getMainUrl());
+                result.put(MyFer.URL_CATE_PLAY,res.get(i).getPlaySound());
+                val.add(result);
+//                categories.add("หมวด"+res.get(i).getCategoryName());
+//                id.add(res.get(i).getId());
+            }
+//            Log.e(TAG,new Gson().toJson(val));
+            adp.UpdateData(val);
             recyclerView.setAdapter(adp);
             playMainSound();
 
@@ -146,6 +191,7 @@ public class FragmentMainApp extends Fragment {
         public void onBodyErrorIsNull() {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
+
             Toast.makeText(context, "null", Toast.LENGTH_SHORT).show();
         }
 
@@ -153,6 +199,7 @@ public class FragmentMainApp extends Fragment {
         public void onFailure(Throwable t) {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
+            t.printStackTrace();
             Toast.makeText(context, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -222,6 +269,7 @@ public class FragmentMainApp extends Fragment {
 
 
     private void setGoFragment(String id,String input){
+
         DataModel dataModel = new DataModel();
         String getUrl = dataModel.getUrl(input);
 
@@ -259,10 +307,11 @@ public class FragmentMainApp extends Fragment {
 
 //                    Toast.makeText(context, result.get(0), Toast.LENGTH_SHORT).show();
 
-                    for (int i=0;i<categories.size();i++){
+                    for (int i=0;i<val.size();i++){
 
-                        if(categories.get(i).equals(result.get(0)) || id.get(i).equals(""+result.get(0))){
-                            setGoFragment(id.get(i),categories.get(i));
+                        if(val.get(i).get(MyFer.CATE).equals(result.get(0)) ||
+                                val.get(i).get(MyFer.ID_CATE).equals(""+result.get(0))){
+                            setGoFragment(val.get(i).get(MyFer.ID_CATE).toString(),val.get(i).get(MyFer.CATE).toString());
 
                         }
                     }

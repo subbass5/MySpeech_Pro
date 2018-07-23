@@ -48,11 +48,7 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
     public static final String KEY_DO_REGISTER = "doRegister";
 
     public static final String KEY_HEADER_SOUND = "header_sound";
-    public static final String KEY_NO1 = "no1";
-    public static final String KEY_NO2 = "no2";
-    public static final String KEY_NO3 = "no3";
-    public static final String KEY_NO4 = "no4";
-    public static final String KEY_NO5 = "no5";
+    public static final String KEY_NO = "no";
     public static final String KEY_URL_SOUND_MAIN = "urlMain";
     public static final String KEY_CATEGORY_ID = "Cate_id";
 
@@ -208,6 +204,7 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
             editor.putString(KEY_COUNTCHECK,loginRes.getCountchack());
             editor.commit();
             Count  = 1;
+
             checkTuch(Integer.parseInt(loginRes.getCountchack()));
 
 //            Toast.makeText(context, ""+loginRes.getCountchack(), Toast.LENGTH_SHORT).show();
@@ -238,7 +235,9 @@ public class FragmentLogin extends Fragment implements View.OnClickListener{
 
         @Override
         public void onFailure(Throwable t) {
-            Log.e(TAG,""+t.getMessage());
+//            Log.e(TAG,""+t.getMessage());
+
+            t.printStackTrace();
             if(progress.isShowing()){
                 progress.dismiss();
                 Toast.makeText(context, "เข้าสู่ระบบไม่สำเร็จ", Toast.LENGTH_SHORT).show();

@@ -3,7 +3,9 @@ package recognitioncom.speech.myspeech.Retrofit;
 import java.util.List;
 
 import recognitioncom.speech.myspeech.Model.CategoriesRes;
+import recognitioncom.speech.myspeech.Model.FirstSoundModel;
 import recognitioncom.speech.myspeech.Model.LoginRes;
+import recognitioncom.speech.myspeech.Model.PlayListModel;
 import recognitioncom.speech.myspeech.Model.PlaySoundRes;
 import recognitioncom.speech.myspeech.Model.QuestionRes;
 import recognitioncom.speech.myspeech.Model.RegisterRes;
@@ -16,17 +18,12 @@ import retrofit2.http.POST;
 
 public interface APIService {
 
-//    @FormUrlEncoded
-//    @POST("apigame/login/")
-//    Call<LoginRes> logIn(@Field("username") String usr);
-//
-//    @FormUrlEncoded
-//    @POST("apigame/register/")
-//    Call<RegisterRes> register(@Field("name") String name,@Field("password") String email,@Field("countcheck") String pwd);
-//
-//
-//    @GET("apigame/list-categories/")
-//    Call<List<CategoriesRes>> getCategory();
+    @GET("api/api-get-sound-app.php")
+    Call<FirstSoundModel> getSound();
+
+    @GET("api/api-get-mainapp.php")
+    Call<FirstSoundModel> getMainAppSound();
+
     @FormUrlEncoded
     @POST("api/api-login.php")
     Call<LoginRes> logIn(@Field("username") String usr);
@@ -38,6 +35,7 @@ public interface APIService {
 
     @GET("api/api-list-categories.php")
     Call<List<CategoriesRes>> getCategory();
+
 
     @FormUrlEncoded
     @POST("api/api-list-questions.php")
@@ -51,6 +49,10 @@ public interface APIService {
     @FormUrlEncoded
     @POST("api/api-play-sound.php")
     Call<List<PlaySoundRes>> getUrlSound(@Field("category_id") String cId);
+
+    @FormUrlEncoded
+    @POST("api/api-play-sound.php")
+    Call<List<PlayListModel>> getPlaySound(@Field("category_id") String cId);
 
 
 }

@@ -11,6 +11,12 @@ public class CategoriesRes {
     @SerializedName("category_name")
     @Expose
     private String categoryName;
+    @SerializedName("main_url")
+    @Expose
+    private String mainUrl;
+    @SerializedName("play_sound")
+    @Expose
+    private String playSound;
 
     public String getId() {
         return id;
@@ -28,4 +34,19 @@ public class CategoriesRes {
         this.categoryName = categoryName;
     }
 
+    public String getMainUrl() {
+        return mainUrl;
+    }
+
+    public void setMainUrl(String mainUrl) {
+        this.mainUrl = mainUrl;
+    }
+
+    public String getPlaySound() {
+        return playSound;
+    }
+
+    public void setPlaySound(String playSound) {
+        this.playSound = playSound;
+    }
 }

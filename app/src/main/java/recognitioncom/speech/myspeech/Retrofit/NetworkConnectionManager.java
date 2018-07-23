@@ -8,7 +8,9 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import recognitioncom.speech.myspeech.MainActivity;
 import recognitioncom.speech.myspeech.Model.CategoriesRes;
+import recognitioncom.speech.myspeech.Model.FirstSoundModel;
 import recognitioncom.speech.myspeech.Model.LoginRes;
+import recognitioncom.speech.myspeech.Model.PlayListModel;
 import recognitioncom.speech.myspeech.Model.PlaySoundRes;
 import recognitioncom.speech.myspeech.Model.QuestionRes;
 import recognitioncom.speech.myspeech.Model.RegisterRes;
@@ -25,7 +27,8 @@ public class NetworkConnectionManager {
 
     }
 
-    public void callLogin(final CallbackLoginListener listener, String usr){
+    public void callFirstSound(final CallbackFirstSoundListener listener){
+
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -33,6 +36,118 @@ public class NetworkConnectionManager {
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        APIService git = retrofit.create(APIService.class);
+        Call call = git.getSound();
+
+        call.enqueue(new Callback<FirstSoundModel>() {
+
+            @Override
+            public void onResponse(Call<FirstSoundModel> call, Response<FirstSoundModel> response) {
+
+                try {
+
+                    FirstSoundModel loginRes =  response.body();
+
+                    if (response.code() != 200) {
+//                        Log.e("Network connected","Response code = "+response.code());
+
+                        ResponseBody responseBody = response.errorBody();
+
+                        if (responseBody != null) {
+                            listener.onBodyError(responseBody);
+                        } else if (responseBody == null) {
+                            listener.onBodyErrorIsNull();
+                        }
+
+                    } else {
+                        listener.onResponse(loginRes);
+                    }
+
+
+                }catch (Exception e){
+                    listener.onFailure(e);
+                }
+            }
+            @Override
+            public void onFailure(Call<FirstSoundModel> call, Throwable t) {
+
+                listener.onFailure(t);
+
+            }
+
+
+        });
+
+
+
+    }
+    public void callUrlmainapp(final CallbackFirstSoundListener listener){
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        APIService git = retrofit.create(APIService.class);
+        Call call = git.getMainAppSound();
+
+        call.enqueue(new Callback<FirstSoundModel>() {
+
+            @Override
+            public void onResponse(Call<FirstSoundModel> call, Response<FirstSoundModel> response) {
+
+                try {
+
+                    FirstSoundModel loginRes =  response.body();
+
+                    if (response.code() != 200) {
+//                        Log.e("Network connected","Response code = "+response.code());
+
+                        ResponseBody responseBody = response.errorBody();
+
+                        if (responseBody != null) {
+                            listener.onBodyError(responseBody);
+                        } else if (responseBody == null) {
+                            listener.onBodyErrorIsNull();
+                        }
+
+                    } else {
+                        listener.onResponse(loginRes);
+                    }
+
+
+                }catch (Exception e){
+                    listener.onFailure(e);
+                }
+            }
+            @Override
+            public void onFailure(Call<FirstSoundModel> call, Throwable t) {
+
+                listener.onFailure(t);
+
+            }
+
+
+        });
+
+
+
+    }
+
+    public void callLogin(final CallbackLoginListener listener, String usr){
+//        Gson gson = new GsonBuilder()
+//                .setLenient()
+//                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         APIService git = retrofit.create(APIService.class);
@@ -46,7 +161,7 @@ public class NetworkConnectionManager {
                 System.out.println(response.code());
                 try {
 
-                    LoginRes loginRes = (LoginRes) response.body();
+                    LoginRes loginRes =  response.body();
 
                     if (response.code() != 200) {
 //                        Log.e("Network connected","Response code = "+response.code());
@@ -310,6 +425,7 @@ public class NetworkConnectionManager {
 
         });
     }
+
     public void getUrlPlaysound(final CallbackPlaysound listener,String category){
 
         Gson gson = new GsonBuilder()
@@ -357,6 +473,66 @@ public class NetworkConnectionManager {
 
             @Override
             public void onFailure(Call<List<PlaySoundRes>> call, Throwable t) {
+
+                listener.onFailure(t);
+
+            }
+
+
+        });
+
+
+
+    }
+
+
+    public void getPlaylist(final CallbackPlaylistListenner listener,String category){
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        APIService git = retrofit.create(APIService.class);
+        Call call = git.getPlaySound(category);
+
+
+        call.enqueue(new Callback<List<PlayListModel>>() {
+
+            @Override
+            public void onResponse(Call<List<PlayListModel>> call, Response<List<PlayListModel>> response) {
+
+                try {
+
+                    List<PlayListModel> categoriesRes =  response.body();
+
+                    if (response.code() != 200) {
+//                        Log.e("Network connected","Response code = "+response.code());
+
+                        ResponseBody responseBody = response.errorBody();
+
+                        if (responseBody != null) {
+                            listener.onBodyError(responseBody);
+                        } else if (responseBody == null) {
+                            listener.onBodyErrorIsNull();
+                        }
+
+                    } else {
+                        listener.onResponse(categoriesRes);
+                    }
+
+
+                }catch (Exception e){
+                    listener.onFailure(e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PlayListModel>> call, Throwable t) {
 
                 listener.onFailure(t);
 

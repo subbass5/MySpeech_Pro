@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,10 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
+import recognitioncom.speech.myspeech.Model.PlayListModel;
 import recognitioncom.speech.myspeech.Model.QuestionRes;
 import recognitioncom.speech.myspeech.R;
+import recognitioncom.speech.myspeech.Retrofit.CallbackPlaylistListenner;
 import recognitioncom.speech.myspeech.Retrofit.CallbackQuestionListenner;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
+import recognitioncom.speech.myspeech.Util.MyFer;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -89,13 +94,14 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
         sharedPreferences = getActivity().getSharedPreferences(FragmentLogin.MYFER, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        Category = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY,"");
-        UrlCategory = sharedPreferences.getString(FragmentLogin.KEY_URL_MAIN_CATEGORY,"");
-        id_ = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
+        Category = sharedPreferences.getString(MyFer.CATE,"");  //get Category name
+        UrlCategory = sharedPreferences.getString(MyFer.URL_CATE_MAIN,"");  // get url play sound
+        id_ = sharedPreferences.getString(MyFer.ID_CATE,"");  //get id
+
 
 
         try {
-//            Log.e(TAG,UrlCategory);
+            Log.e(TAG,UrlCategory+"   "+id_);
             mPlayer = new MediaPlayer();
             mPlayer.setDataSource(UrlCategory);
             mPlayer.prepare();
@@ -152,84 +158,17 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
 
 
     private void btnPlaySound(){
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage(getString(R.string.progressLoading));
+        progressDialog.show();
+
+//        dataCategory(Category);
+        new NetworkConnectionManager().getPlaylist(playlistListenner,id_);
 
 
-        dataCategory(Category);
-        FragmentListenCategory listenCategory = new FragmentListenCategory();
-        fragmentTran(listenCategory,null);
-
-
-    }
-
-    private void dataCategory(String category){
-
-        editor.putString(FragmentLogin.KEY_HEADER_SOUND,category);
-
-            if(category.equals("หมวดสัตว์เลี้ยง"))
-            {
-                    editor.putString(FragmentLogin.KEY_NO1,"เสียงแมว");
-                    editor.putString(FragmentLogin.KEY_NO2,"เสียงสุนัข");
-                    editor.putString(FragmentLogin.KEY_NO3,"เสียงไก่");
-                    editor.putString(FragmentLogin.KEY_NO4,"เสียงนก");
-                    editor.putString(FragmentLogin.KEY_NO5,"เสียงกระต่าย");
-                    editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN,
-                            "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/H.wav?alt=media&token=d7b8dae9-3cce-4114-abfc-27a7e2cb1a92");
-            }
-          else if(category.equals("หมวดสัตว์อันตราย"))
-          {
-                  editor.putString(FragmentLogin.KEY_NO1,"เสียงเสือ");
-                  editor.putString(FragmentLogin.KEY_NO2,"เสียงจระเข้");
-                  editor.putString(FragmentLogin.KEY_NO3,"เสียงสิงโต");
-                  editor.putString(FragmentLogin.KEY_NO4,"เสียงปลาฉลาม");
-                  editor.putString(FragmentLogin.KEY_NO5,"เสียงช้าง");
-                  editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN,
-                          "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/I.wav?alt=media&token=290fc3ba-e4a2-4399-a7ed-8a21ef018c5d");
-          }
-          else if(category.equals("หมวดเตือนภัย")){
-                    editor.putString(FragmentLogin.KEY_NO1,"สัญญาณไฟไหม้");
-                    editor.putString(FragmentLogin.KEY_NO2,"สัญญาณน้ำท่วม");
-                    editor.putString(FragmentLogin.KEY_NO3,"สัญญาณรถพยาบาลฉุกเฉิน");
-                    editor.putString(FragmentLogin.KEY_NO4,"สัญญาณรถดับเพลิง");
-                    editor.putString(FragmentLogin.KEY_NO5,"สัญญาณรถตำรวจ");
-                editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN,
-                        "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/J.wav?alt=media&token=062a8ac1-4f32-43de-b587-92c03f7308c8");
-        }
-         else if(category.equals("หมวดยานพาหนะ"))
-         {
-             editor.putString(FragmentLogin.KEY_NO1,"เสียงรถยนต์");
-             editor.putString(FragmentLogin.KEY_NO2,"เสียงเรือ");
-             editor.putString(FragmentLogin.KEY_NO3,"เสียงรถมอเตอร์ไซต์");
-             editor.putString(FragmentLogin.KEY_NO4,"เสียงเครื่องบิน");
-             editor.putString(FragmentLogin.KEY_NO5,"เสียงรถไฟ");
-             editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN,
-                     "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/K.wav?alt=media&token=ff43faab-6a39-4d97-b4d0-11137e79bcfc");
-        }
-
-
-          else if(category.equals("หมวดอวัยวะในร่างกาย"))
-          {
-              editor.putString(FragmentLogin.KEY_NO1,"เสียงหู");
-              editor.putString(FragmentLogin.KEY_NO2,"เสียงเท้า");
-              editor.putString(FragmentLogin.KEY_NO3,"เสียงจมูก");
-              editor.putString(FragmentLogin.KEY_NO4,"เสียงนิ้วมือ");
-              editor.putString(FragmentLogin.KEY_NO5,"เสียงลิ้น");
-              editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN,
-                      "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/L.wav?alt=media&token=50db637d-bfbf-436c-aaab-8d61808e6ce0");
-        }
-        else if(category.equals("หมวดการช่วยเหลือตนเอง"))
-        {
-            editor.putString(FragmentLogin.KEY_NO1,"การเข้าห้องน้ำ");
-            editor.putString(FragmentLogin.KEY_NO2,"การเดินข้ามถนน");
-            editor.putString(FragmentLogin.KEY_NO3,"การอาบน้ำ");
-            editor.putString(FragmentLogin.KEY_NO4,"การรับประทานอาหาร");
-            editor.putString(FragmentLogin.KEY_NO5,"");
-            editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN,
-                    "https://firebasestorage.googleapis.com/v0/b/project1-98b7f.appspot.com/o/M.wav?alt=media&token=519c9b72-351f-41b1-b234-de4a25186c8e");
-        }
-
-        editor.commit();
 
     }
+
 
     private void btnPlayChoice(){
 
@@ -279,6 +218,50 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
         }
     }
 
+    CallbackPlaylistListenner playlistListenner = new CallbackPlaylistListenner() {
+
+        @Override
+        public void onResponse(List<PlayListModel> playListModels) {
+
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+
+            editor.putString(FragmentLogin.KEY_HEADER_SOUND,Category);
+            editor.putString(FragmentLogin.KEY_NO, new Gson().toJson(playListModels));
+            editor.putString(FragmentLogin.KEY_URL_SOUND_MAIN, sharedPreferences.getString(MyFer.URL_CATE_PLAY,""));
+            editor.putInt("index",playListModels.size());
+            editor.commit();
+
+            FragmentListenCategory listenCategory = new FragmentListenCategory();
+            fragmentTran(listenCategory,null);
+
+        }
+
+        @Override
+        public void onBodyError(ResponseBody responseBodyError) {
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onBodyErrorIsNull() {
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+            t.printStackTrace();
+        }
+    };
+
+
     CallbackQuestionListenner listenner = new CallbackQuestionListenner() {
         @Override
         public void onResponse(List<QuestionRes> questionRes) {
@@ -308,6 +291,7 @@ public class FragmentMainCategory extends Fragment implements View.OnClickListen
 
                 editor.putInt(FragmentLogin.KEY_SIZE,questionRes.size());
                 editor.putString(FragmentLogin.KEY_DATA,jsonArray.toString());
+                Log.e(TAG,jsonArray.toString());
                 editor.commit();
 
             } catch (JSONException e) {

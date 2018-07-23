@@ -20,6 +20,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,7 @@ import recognitioncom.speech.myspeech.R;
 import recognitioncom.speech.myspeech.Retrofit.CallbackPlaysound;
 import recognitioncom.speech.myspeech.Retrofit.NetworkConnectionManager;
 import recognitioncom.speech.myspeech.TTS.MyTTS;
+import recognitioncom.speech.myspeech.Util.MyFer;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -75,25 +82,52 @@ public class FragmentListenCategory extends Fragment{
         sharedPreferences = getActivity().getSharedPreferences(FragmentLogin.MYFER, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        category_id = sharedPreferences.getString(FragmentLogin.KEY_CATEGORY_ID,"");
+        category_id = sharedPreferences.getString(MyFer.ID_CATE,"");
 
-        Toast.makeText(context, ""+category_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, ""+category_id, Toast.LENGTH_SHORT).show();
         Log.d(TAG,""+category_id);
 
         if(!sharedPreferences.getString(FragmentLogin.KEY_HEADER_SOUND,"").isEmpty())
-        tv_header.setText(sharedPreferences.getString(FragmentLogin.KEY_HEADER_SOUND,""));
-        if(!sharedPreferences.getString(FragmentLogin.KEY_NO1,"").isEmpty())
-        tv_no1.setText("1."+sharedPreferences.getString(FragmentLogin.KEY_NO1,""));
-        if(!sharedPreferences.getString(FragmentLogin.KEY_NO2,"").isEmpty())
-        tv_no2.setText("2."+sharedPreferences.getString(FragmentLogin.KEY_NO2,""));
-        if(!sharedPreferences.getString(FragmentLogin.KEY_NO3,"").isEmpty())
-        tv_no3.setText("3."+sharedPreferences.getString(FragmentLogin.KEY_NO3,""));
-        if(!sharedPreferences.getString(FragmentLogin.KEY_NO4,"").isEmpty())
-        tv_no4.setText("4."+sharedPreferences.getString(FragmentLogin.KEY_NO4,""));
-        if(!sharedPreferences.getString(FragmentLogin.KEY_NO5,"").isEmpty())
-        tv_no5.setText("5."+sharedPreferences.getString(FragmentLogin.KEY_NO5,""));
-        else
-            tv_no5.setText("");
+            tv_header.setText(sharedPreferences.getString(FragmentLogin.KEY_HEADER_SOUND,""));
+
+        try {
+
+            JSONArray jsonArray = new JSONArray(sharedPreferences.getString(FragmentLogin.KEY_NO,""));
+            Log.e(TAG,jsonArray.toString());
+
+            String name = "name";
+            for (int i =0;i<jsonArray.length();i++){
+
+                JSONObject jsonObject = new JSONObject(jsonArray.get(i).toString());
+                Log.e(TAG,jsonObject.getString(name)+" "+i);
+
+                if(i == 0 )
+                  tv_no1.setText("1."+jsonObject.getString(name));
+
+                else if(i==1 )
+                    tv_no2.setText("2."+jsonObject.getString(name));
+
+
+                else if(i==2 )
+                    tv_no3.setText("3."+jsonObject.getString(name));
+
+
+                else if(i==3 )
+                    tv_no4.setText("4."+jsonObject.getString(name));
+
+
+                else if(i==4 )
+                    tv_no5.setText("5."+jsonObject.getString(name));
+
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        int size = sharedPreferences.getInt("index",0);
+
 
 
         swipeRefreshLayout = v.findViewById(R.id.swipeRefreshLayout);
@@ -114,7 +148,7 @@ public class FragmentListenCategory extends Fragment{
             }
         });
 
-        playSound(sharedPreferences.getString(FragmentLogin.KEY_URL_SOUND_MAIN,""));
+        playSound(sharedPreferences.getString(MyFer.URL_CATE_PLAY,""));
 
         new NetworkConnectionManager().getUrlPlaysound(playsound,category_id);
     }
